@@ -3,19 +3,29 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useLanguage } from '@/components/providers/LanguageProvider'
+import ProductModal from '@/components/ui/ProductModal'
+import { CartItem } from '@/components/providers/CartProvider'
+
+type Product = Omit<CartItem, 'quantity'>
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
 const objects = {
   en: [
-    { id: 'solace-02',    collection: 'Solace',    name: 'Solace No. 02',    subtitle: 'Ceramic vessel · 200g',     description: 'Black amber and smoked patchouli. A deep, lingering burn for evenings that ask for nothing.',                   price: '€ 88', burnTime: '50–55 hrs', imageSrc: '/images/solace.jpg',    gradClass: 'obj-1', accent: 'rgba(60, 100, 70, 0.14)' },
-    { id: 'echo-03',      collection: 'Echo',      name: 'Echo No. 03',      subtitle: 'Glazed ceramic · 190g',     description: 'Saffron, dark vanilla, and oud. The scent of rooms where music has just stopped playing.',                  price: '€ 82', burnTime: '45–50 hrs', imageSrc: '/images/echo.jpg',      gradClass: 'obj-2', accent: 'rgba(80, 100, 200, 0.1)' },
-    { id: 'celestial-04', collection: 'Celestial', name: 'Celestial No. 04', subtitle: 'Artisan ceramic · 215g',   description: 'Smoked amber and deep musk. For the quiet hours when only the night sky is awake.',                          price: '€ 95', burnTime: '55–60 hrs', imageSrc: '/images/celestial.jpg', gradClass: 'obj-3', accent: 'rgba(120, 110, 200, 0.12)' },
+    { id: 'solace-02',    collection: 'Solace',    name: 'Solace No. 02',    subtitle: 'Ceramic vessel · 200g',     description: 'Black amber and smoked patchouli. A deep, lingering burn for evenings that ask for nothing.',                   price: '€ 88', burnTime: '50–55 hrs', imageSrc: '/images/solace.jpg',          gradClass: 'obj-1', accent: 'rgba(60, 100, 70, 0.14)' },
+    { id: 'echo-03',      collection: 'Echo',      name: 'Echo No. 03',      subtitle: 'Glazed ceramic · 190g',     description: 'Saffron, dark vanilla, and oud. The scent of rooms where music has just stopped playing.',                  price: '€ 82', burnTime: '45–50 hrs', imageSrc: '/images/echo.jpg',            gradClass: 'obj-2', accent: 'rgba(80, 100, 200, 0.1)' },
+    { id: 'celestial-04', collection: 'Celestial', name: 'Celestial No. 04', subtitle: 'Artisan ceramic · 215g',   description: 'Smoked amber and deep musk. For the quiet hours when only the night sky is awake.',                          price: '€ 95', burnTime: '55–60 hrs', imageSrc: '/images/celestial.jpg',       gradClass: 'obj-3', accent: 'rgba(120, 110, 200, 0.12)' },
+    { id: 'roots-05',     collection: 'Roots',     name: 'Roots No. 05',     subtitle: 'Raw ceramic · 210g',        description: 'Vetiver, dark earth, and cedarwood. A grounding scent that recalls ancient forests after rain.',              price: '€ 90', burnTime: '52–58 hrs', imageSrc: '/images/roots-branches.jpg',  gradClass: 'obj-1', accent: 'rgba(80, 60, 30, 0.16)' },
+    { id: 'stone-06',     collection: 'Stone',     name: 'Stone No. 06',     subtitle: 'Stoneware · 225g',          description: 'Mineral cool and white birch. The silence of a quarry at dawn — pure, weightless, still.',                   price: '€ 92', burnTime: '55–62 hrs', imageSrc: '/images/stone-vessel.jpg',   gradClass: 'obj-2', accent: 'rgba(100, 130, 140, 0.12)' },
+    { id: 'spiral-07',    collection: 'Spiral',    name: 'Spiral No. 07',    subtitle: 'Handthrown ceramic · 205g', description: 'Bergamot, black pepper, and aged sandalwood. A complexity that reveals itself slowly, hour by hour.',       price: '€ 98', burnTime: '58–64 hrs', imageSrc: '/images/spiral-form.jpg',    gradClass: 'obj-3', accent: 'rgba(160, 100, 60, 0.13)' },
   ],
   uk: [
-    { id: 'solace-02',    collection: 'Solace',    name: 'Solace No. 02',    subtitle: 'Керамічний посуд · 200г',   description: 'Чорний янтар і копчений пачулі. Глибоке, тривале горіння для вечорів, які нічого не вимагають.',           price: '€ 88', burnTime: '50–55 год', imageSrc: '/images/solace.jpg',    gradClass: 'obj-1', accent: 'rgba(60, 100, 70, 0.14)' },
-    { id: 'echo-03',      collection: 'Echo',      name: 'Echo No. 03',      subtitle: 'Глазурована кераміка · 190г', description: 'Шафран, темна ваніль та уд. Запах кімнат, де щойно стихла музика.',                                   price: '€ 82', burnTime: '45–50 год', imageSrc: '/images/echo.jpg',      gradClass: 'obj-2', accent: 'rgba(80, 100, 200, 0.1)' },
-    { id: 'celestial-04', collection: 'Celestial', name: 'Celestial No. 04', subtitle: 'Авторська кераміка · 215г',  description: 'Копчений янтар і глибокий мускус. Для тихих годин, коли лише нічне небо не спить.',                    price: '€ 95', burnTime: '55–60 год', imageSrc: '/images/celestial.jpg', gradClass: 'obj-3', accent: 'rgba(120, 110, 200, 0.12)' },
+    { id: 'solace-02',    collection: 'Solace',    name: 'Solace No. 02',    subtitle: 'Керамічний посуд · 200г',      description: 'Чорний янтар і копчений пачулі. Глибоке, тривале горіння для вечорів, які нічого не вимагають.',           price: '€ 88', burnTime: '50–55 год', imageSrc: '/images/solace.jpg',          gradClass: 'obj-1', accent: 'rgba(60, 100, 70, 0.14)' },
+    { id: 'echo-03',      collection: 'Echo',      name: 'Echo No. 03',      subtitle: 'Глазурована кераміка · 190г',  description: 'Шафран, темна ваніль та уд. Запах кімнат, де щойно стихла музика.',                                   price: '€ 82', burnTime: '45–50 год', imageSrc: '/images/echo.jpg',            gradClass: 'obj-2', accent: 'rgba(80, 100, 200, 0.1)' },
+    { id: 'celestial-04', collection: 'Celestial', name: 'Celestial No. 04', subtitle: 'Авторська кераміка · 215г',    description: 'Копчений янтар і глибокий мускус. Для тихих годин, коли лише нічне небо не спить.',                    price: '€ 95', burnTime: '55–60 год', imageSrc: '/images/celestial.jpg',       gradClass: 'obj-3', accent: 'rgba(120, 110, 200, 0.12)' },
+    { id: 'roots-05',     collection: 'Roots',     name: 'Roots No. 05',     subtitle: 'Необроблена кераміка · 210г',  description: 'Ветивер, темна земля і кедр. Заземлюючий аромат, що нагадує давні ліси після дощу.',                   price: '€ 90', burnTime: '52–58 год', imageSrc: '/images/roots-branches.jpg',  gradClass: 'obj-1', accent: 'rgba(80, 60, 30, 0.16)' },
+    { id: 'stone-06',     collection: 'Stone',     name: 'Stone No. 06',     subtitle: 'Кам\'яний посуд · 225г',       description: 'Мінеральна прохолода і біла береза. Тиша каменоломні на світанку — чиста, невагома, нерухома.',         price: '€ 92', burnTime: '55–62 год', imageSrc: '/images/stone-vessel.jpg',   gradClass: 'obj-2', accent: 'rgba(100, 130, 140, 0.12)' },
+    { id: 'spiral-07',    collection: 'Spiral',    name: 'Spiral No. 07',    subtitle: 'Ручна кераміка · 205г',        description: 'Бергамот, чорний перець і витриманий сандал. Складність, яка розкривається повільно, година за годиною.', price: '€ 98', burnTime: '58–64 год', imageSrc: '/images/spiral-form.jpg',    gradClass: 'obj-3', accent: 'rgba(160, 100, 60, 0.13)' },
   ],
 }
 
@@ -24,7 +34,7 @@ const UI = {
   uk: { label: 'Обрані об\'єкти',   h2: 'Обрані за своєю атмосферою.', addBtn: 'Додати до ритуалу', burnLabel: 'Час горіння', viewAll: 'Вся колекція' },
 }
 
-function ObjectCard({ obj, index, ui }: { obj: (typeof objects.en)[0]; index: number; ui: typeof UI.en }) {
+function ObjectCard({ obj, index, ui, onOpen }: { obj: (typeof objects.en)[0]; index: number; ui: typeof UI.en; onOpen: (p: Product) => void }) {
   const [hovered, setHovered] = useState(false)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
@@ -33,6 +43,7 @@ function ObjectCard({ obj, index, ui }: { obj: (typeof objects.en)[0]; index: nu
     <motion.div
       ref={ref}
       className="group cursor-pointer"
+      onClick={() => onOpen({ id: obj.id, name: obj.name, subtitle: obj.subtitle, price: obj.price, imageSrc: obj.imageSrc, collection: obj.collection })}
       style={{ border: '1px solid rgba(255,255,255,0.05)', background: '#0A0806' }}
       initial={{ opacity: 0, y: 48 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -106,8 +117,11 @@ export default function FeaturedObjects() {
   const inView = useInView(titleRef, { once: true, margin: '-80px' })
   const items = objects[lang]
   const ui = UI[lang]
+  const [selected, setSelected] = useState<Product | null>(null)
 
   return (
+    <>
+    <ProductModal product={selected} onClose={() => setSelected(null)} />
     <section id="objects" style={{ background: '#0F0C09' }}>
       <div className="max-w-[1400px] mx-auto px-8 md:px-16 py-32 md:py-40">
         <div className="mb-16" ref={titleRef}>
@@ -133,7 +147,7 @@ export default function FeaturedObjects() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px">
           {items.map((obj, i) => (
-            <ObjectCard key={obj.id} obj={obj} index={i} ui={ui} />
+            <ObjectCard key={obj.id} obj={obj} index={i} ui={ui} onOpen={setSelected} />
           ))}
         </div>
 
@@ -151,5 +165,6 @@ export default function FeaturedObjects() {
         </motion.div>
       </div>
     </section>
+    </>
   )
 }

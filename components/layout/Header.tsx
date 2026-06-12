@@ -2,7 +2,9 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { ShoppingBag } from 'lucide-react'
 import { useLanguage } from '@/components/providers/LanguageProvider'
+import { useCart } from '@/components/providers/CartProvider'
 
 const NAV = {
   en: ['Collections', 'Objects', 'Story', 'The Ritual'],
@@ -14,6 +16,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { lang, toggle } = useLanguage()
+  const { count, setCartOpen } = useCart()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -68,6 +71,23 @@ export default function Header() {
             onMouseLeave={e => (e.currentTarget.style.color = 'rgba(180, 130, 60, 0.55)')}
           >
             {lang === 'en' ? 'УКР' : 'EN'}
+          </button>
+
+          <button
+            onClick={() => setCartOpen(true)}
+            className="relative p-2 transition-opacity hover:opacity-70"
+            style={{ color: 'rgba(200,175,140,0.7)' }}
+            aria-label="Кошик"
+          >
+            <ShoppingBag size={18} strokeWidth={1.5} />
+            {count > 0 && (
+              <span
+                className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center font-sans text-[9px] rounded-full"
+                style={{ background: 'rgba(180,130,50,0.9)', color: '#0F0C09' }}
+              >
+                {count}
+              </span>
+            )}
           </button>
 
           <a

@@ -3,8 +3,10 @@ import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import './globals.css'
 import SmoothScrollProvider from '@/components/providers/SmoothScroll'
 import { LanguageProvider } from '@/components/providers/LanguageProvider'
+import { CartProvider } from '@/components/providers/CartProvider'
 import GrainOverlay from '@/components/ui/GrainOverlay'
 import LoadingScreen from '@/components/ui/LoadingScreen'
+import CartDrawer from '@/components/ui/CartDrawer'
 
 const cormorant = Cormorant_Garamond({
   variable: '--font-cormorant',
@@ -39,9 +41,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body>
         <LanguageProvider>
-          <LoadingScreen />
-          <GrainOverlay />
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          <CartProvider>
+            <LoadingScreen />
+            <GrainOverlay />
+            <CartDrawer />
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>
