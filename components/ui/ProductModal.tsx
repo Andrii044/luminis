@@ -20,7 +20,10 @@ export default function ProductModal({ product, onClose }: Props) {
   const [added, setAdded] = useState(false)
 
   useEffect(() => {
-    if (!product) return
+    if (!product) {
+      document.body.style.overflow = ''
+      return
+    }
     setQty(1)
     setAdded(false)
     document.body.style.overflow = 'hidden'
@@ -42,8 +45,8 @@ export default function ProductModal({ product, onClose }: Props) {
       {product && (
         <>
           <motion.div
-            className="fixed inset-0 z-50"
-            style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
+            className="fixed inset-0 z-50 cursor-pointer"
+            style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', WebkitTapHighlightColor: 'transparent' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -51,57 +54,66 @@ export default function ProductModal({ product, onClose }: Props) {
           />
 
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 pointer-events-none"
+            className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-8"
+            style={{ pointerEvents: 'none' }}
           >
             <motion.div
-              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
-              style={{ background: '#0F0C09', border: '1px solid rgba(255,255,255,0.07)' }}
-              initial={{ opacity: 0, y: 40, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.98 }}
-              transition={{ duration: 0.5, ease: EASE }}
+              className="relative w-full md:max-w-4xl overflow-y-auto pointer-events-auto"
+              style={{
+                background: '#0F0C09',
+                border: '1px solid rgba(255,255,255,0.07)',
+                maxHeight: '92vh',
+                WebkitOverflowScrolling: 'touch',
+                paddingBottom: 'env(safe-area-inset-bottom)',
+              } as React.CSSProperties}
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              transition={{ duration: 0.45, ease: EASE }}
               onClick={e => e.stopPropagation()}
             >
               <button
                 onClick={onClose}
-                className="absolute top-5 right-5 z-10 p-2 transition-opacity hover:opacity-60"
-                style={{ color: 'rgba(200,175,140,0.6)' }}
+                className="absolute top-4 right-4 z-10 p-3"
+                style={{ color: 'rgba(200,175,140,0.6)', WebkitTapHighlightColor: 'transparent' }}
               >
                 <X size={20} />
               </button>
 
               <div className="grid md:grid-cols-2">
-                <div className="relative" style={{ aspectRatio: '3/4', minHeight: 320 }}>
+                <div className="relative" style={{ aspectRatio: '16/9', minHeight: 220 }}>
                   <img
                     src={product.imageSrc}
                     alt={product.name}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to right, transparent 70%, #0F0C09)' }} />
-                  <div className="absolute top-5 left-5">
-                    <span className="font-sans text-[8px] tracking-[0.35em] uppercase px-3 py-1.5"
-                      style={{ background: 'rgba(8,5,2,0.6)', color: 'rgba(200,160,75,0.82)', backdropFilter: 'blur(10px)', border: '1px solid rgba(180,130,50,0.18)' }}>
+                  <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent 50%, #0F0C09), linear-gradient(to right, transparent 70%, #0F0C09)' }} />
+                  <div className="absolute top-4 left-4">
+                    <span
+                      className="font-sans text-[8px] tracking-[0.35em] uppercase px-3 py-1.5"
+                      style={{ background: 'rgba(8,5,2,0.6)', color: 'rgba(200,160,75,0.82)', backdropFilter: 'blur(10px)', border: '1px solid rgba(180,130,50,0.18)' }}
+                    >
                       {product.collection}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-8 md:p-12 flex flex-col justify-between">
+                <div className="p-6 md:p-10 flex flex-col justify-between">
                   <div>
-                    <h2 className="font-serif font-light mb-2" style={{ fontSize: 'clamp(24px, 3vw, 36px)', color: 'rgba(240,225,200,0.92)', letterSpacing: '-0.01em' }}>
+                    <h2 className="font-serif font-light mb-2" style={{ fontSize: 'clamp(22px, 5vw, 36px)', color: 'rgba(240,225,200,0.92)', letterSpacing: '-0.01em' }}>
                       {product.name}
                     </h2>
-                    <p className="font-sans text-[10px] tracking-[0.15em] mb-6" style={{ color: 'rgba(160,140,115,0.6)' }}>
+                    <p className="font-sans text-[10px] tracking-[0.15em] mb-5" style={{ color: 'rgba(160,140,115,0.6)' }}>
                       {product.subtitle}
                     </p>
 
-                    <div className="h-px mb-8" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                    <div className="h-px mb-5" style={{ background: 'rgba(255,255,255,0.06)' }} />
 
-                    <p className="font-sans text-xs leading-7 mb-8" style={{ color: 'rgba(180,160,135,0.75)' }}>
+                    <p className="font-sans text-xs leading-7 mb-6" style={{ color: 'rgba(180,160,135,0.75)' }}>
                       Ручна робота. Кожна свічка виготовлена з соєвого воску преміум класу з натуральними ефірними оліями. Поверхня — авторська кераміка, яка залишається як декор після використання.
                     </p>
 
-                    <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                       {[
                         { label: 'Вага', value: product.subtitle.split('·')[1]?.trim() ?? '—' },
                         { label: 'Матеріал', value: product.subtitle.split('·')[0]?.trim() ?? '—' },
@@ -117,34 +129,41 @@ export default function ProductModal({ product, onClose }: Props) {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-between mb-5">
                       <span className="font-serif font-light text-2xl" style={{ color: 'rgba(200,155,75,0.9)' }}>{product.price}</span>
 
-                      <div className="flex items-center gap-3" style={{ border: '1px solid rgba(255,255,255,0.08)', padding: '6px 12px' }}>
-                        <button onClick={() => setQty(q => Math.max(1, q - 1))} className="p-1 transition-opacity hover:opacity-60" style={{ color: 'rgba(200,175,140,0.7)' }}>
+                      <div className="flex items-center" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+                        <button
+                          onClick={() => setQty(q => Math.max(1, q - 1))}
+                          className="p-3"
+                          style={{ color: 'rgba(200,175,140,0.7)', WebkitTapHighlightColor: 'transparent' }}
+                        >
                           <Minus size={14} />
                         </button>
-                        <span className="font-sans text-sm w-6 text-center" style={{ color: 'rgba(240,225,200,0.9)' }}>{qty}</span>
-                        <button onClick={() => setQty(q => q + 1)} className="p-1 transition-opacity hover:opacity-60" style={{ color: 'rgba(200,175,140,0.7)' }}>
+                        <span className="font-sans text-sm w-8 text-center" style={{ color: 'rgba(240,225,200,0.9)' }}>{qty}</span>
+                        <button
+                          onClick={() => setQty(q => q + 1)}
+                          className="p-3"
+                          style={{ color: 'rgba(200,175,140,0.7)', WebkitTapHighlightColor: 'transparent' }}
+                        >
                           <Plus size={14} />
                         </button>
                       </div>
                     </div>
 
-                    <motion.button
+                    <button
                       onClick={handleAdd}
-                      className="w-full font-sans text-[10px] tracking-[0.22em] uppercase py-4 flex items-center justify-center gap-3 transition-all"
+                      className="w-full font-sans text-[10px] tracking-[0.22em] uppercase py-4 flex items-center justify-center gap-3"
                       style={{
                         background: added ? 'rgba(60,100,70,0.2)' : 'rgba(180,130,50,0.12)',
                         border: `1px solid ${added ? 'rgba(80,140,90,0.4)' : 'rgba(180,130,50,0.35)'}`,
                         color: added ? 'rgba(120,200,130,0.9)' : 'rgba(225,188,108,0.9)',
+                        WebkitTapHighlightColor: 'transparent',
                       }}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
                     >
                       <ShoppingBag size={14} />
                       {added ? 'Додано в кошик' : 'Додати в кошик'}
-                    </motion.button>
+                    </button>
                   </div>
                 </div>
               </div>
